@@ -2,12 +2,14 @@
 import os
 import psycopg
 from dotenv import load_dotenv
+from psycopg.rows import dict_row
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+
 
 
 def get_db_connection():
@@ -17,10 +19,12 @@ def get_db_connection():
 
     conn = psycopg.connect(
         DATABASE_URL,
-        sslmode="require"
+        sslmode="require",
+        row_factory=dict_row
     )
 
     return conn
+
 
 
 def add_log(username, action):
