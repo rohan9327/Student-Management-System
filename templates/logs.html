@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs</title>
+</head>
+<body>
+    <h1>Activity Logs</h1>
+    <ul>
+        {% for log in activity_logs %}
+        <li>
+            <strong>{{ log.username }}</strong> - {{ log.action }} at {{ log.time }}
+        </li>
+        {% endfor %}
+    </ul>
+
+
+    <h2>Activity Logs</h2>
+
+<table border="1">
+
+    <tr>
+        <th>Username</th>
+        <th>Action</th>
+        <th>Time</th>
+    </tr>
+
+    {% for log in activity_logs %}
+
+    <tr>
+        <td>{{ log.username }}</td>
+        <td>{{ log.action }}</td>
+        <td>{{ log.time }}</td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+</body>
+</html>

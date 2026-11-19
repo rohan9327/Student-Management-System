@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit User</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <div class="edit-container">
+
+        <div class="edit-header">
+            <h2>Edit User</h2>
+            <p>Update user account information</p>
+        </div>
+
+        <div class="edit-form">
+
+            <form method="POST">
+
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username"
+                           value="{{ user.username }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="text" name="password"
+                           value="{{ user.password }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>User Role</label>
+                    <select name="role">
+                        <option value="admin"
+                        {% if user.role == 'admin' %}selected{% endif %}>
+                            Admin
+                        </option>
+
+                        <option value="user"
+                        {% if user.role == 'user' %}selected{% endif %}>
+                            User
+                        </option>
+                    </select>
+                </div>
+
+                <button type="submit" class="update-btn">
+                    Update User
+                </button>
+
+            </form>
+
+            <a href="{{ url_for('manage_users') }}" class="back-link">
+                ← Back to Manage Users
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

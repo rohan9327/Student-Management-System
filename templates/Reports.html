@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Reports Dashboard</h2>
+    <p>Student Management System Reports</p>
+
+    <!-- Summary Cards -->
+
+    <div class="report-cards">
+
+        <div class="report-card" onclick="showReport('students')">
+            <h3>Total Students</h3>
+            <h2>{{ total_students }}</h2>
+            <p>Click to View Details →</p>
+        </div>
+
+        <div class="report-card" onclick="showReport('users')">
+            <h3>Total Users</h3>
+            <h2>{{ total_users }}</h2>
+            <p>Click to View Details →</p>
+        </div>
+
+        <div class="report-card" onclick="showReport('registrations')">
+            <h3>Today's Registrations</h3>
+            <h2>{{ today_registrations }}</h2>
+            <p>Click to View Details →</p>
+        </div>
+
+        <div class="report-card" onclick="showReport('activities')">
+            <h3>Activity Summary</h3>
+            <h2>{{ total_activities }}</h2>
+            <p>Click to View Details →</p>
+        </div>
+
+    </div>
+
+    <div class="export-actions" id="exportActions" style="display: none;">
+
+    <button onclick="exportExcel()">
+        Export Excel
+    </button>
+
+    <button onclick="exportPDF()">
+        Export PDF
+    </button>
+
+</div>
+
+
+    <!-- Student Report -->
+
+    <div class="report-section" id="students">
+
+        <h2>Student Details Report</h2>
+
+        <table>
+            <tr>
+                <th>Sr No.</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Date</th>
+            </tr>
+
+            {% for student in students %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.course }}</td>
+                <td>{{ student.age }}</td>
+                <td>{{ student.city }}</td>
+                <td>{{ student.phone }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.date }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8">No Student Records Found</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+
+    <!-- User Report -->
+
+    <div class="report-section" id="users">
+
+        <h2>User Details Report</h2>
+
+        <table>
+            <tr>
+                <th>Sr No.</th>
+                <th>Username</th>
+                <th>Role</th>
+            </tr>
+
+            {% for user in users %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.role }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No Users Found</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+
+    <!-- Today's Registration Report -->
+
+    <div class="report-section" id="registrations">
+
+        <h2>Today's Registration Report</h2>
+
+        <table>
+            <tr>
+                <th>Sr No.</th>
+                <th>Name</th>
+                <th>Course</th>
+                <th>City</th>
+                <th>Phone</th>
+                <th>Date</th>
+            </tr>
+
+            {% set ns = namespace(count=0) %}
+
+            {% for student in students %}
+
+                {% if student.registration_date == today %}
+
+                    {% set ns.count = ns.count + 1 %}
+
+                    <tr>
+                        <td>{{ ns.count }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.city }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.registration_date }}</td>
+                    </tr>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if ns.count == 0 %}
+            <tr>
+                <td colspan="6">No Registrations Today</td>
+            </tr>
+            {% endif %}
+
+        </table>
+
+    </div>
+
+
+    <!-- Activity Report -->
+
+    <div class="report-section" id="activities">
+
+        <h2>Activity Logs Report</h2>
+
+        <table>
+            <tr>
+                <th>Sr No.</th>
+                <th>Username</th>
+                <th>Activity</th>
+                <th>Date & Time</th>
+            </tr>
+
+            {% for log in activity_logs %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ log.username }}</td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.time }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">No Activity Found</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+
+    <br>
+
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+
+</div>
+
+
+<!-- JavaScript -->
+
+<script>
+
+let currentReportId = "";
+
+function showReport(reportId) {
+
+    document.querySelectorAll('.report-section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    document.getElementById(reportId).style.display = 'block';
+
+    currentReportId = reportId;
+
+    document.getElementById('exportActions').style.display = 'flex';
+
+    document.getElementById(reportId).scrollIntoView({
+        behavior: 'smooth'
+    });
+}
+
+
+// Export Excel
+
+function exportExcel() {
+
+    let section = document.getElementById(currentReportId);
+    let table = section.querySelector('table');
+
+    let workbook = XLSX.utils.table_to_book(table, {
+        sheet: "Report"
+    });
+
+    XLSX.writeFile(workbook, currentReportId + "_report.xlsx");
+}
+
+
+// Export PDF
+
+
+function exportPDF() {
+
+    const { jsPDF } = window.jspdf;
+
+    let doc = new jsPDF('l', 'mm', 'a4');
+
+    let section = document.getElementById(currentReportId);
+
+    let title = section.querySelector('h2').innerText;
+
+    let table = section.querySelector('table');
+
+    let today = new Date().toLocaleDateString('en-IN');
+
+    // Header
+    function addHeader() {
+
+        doc.setFontSize(18);
+        doc.setFont("helvetica", "bold");
+
+        doc.text("STUDENT MANAGEMENT SYSTEM", 148, 15, {
+            align: "center"
+        });
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+
+        doc.text("Generated Report", 148, 22, {
+            align: "center"
+        });
+
+        doc.setDrawColor(41, 128, 185);
+        doc.line(14, 27, 283, 27);
+    }
+
+    // Footer
+    function addFooter() {
+
+        let pageCount = doc.internal.getNumberOfPages();
+
+        for (let i = 1; i <= pageCount; i++) {
+
+            doc.setPage(i);
+
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+
+            doc.setDrawColor(180, 180, 180);
+            doc.line(14, 195, 283, 195);
+
+            doc.text("Student Management System", 14, 201);
+
+            doc.text(
+                "Page " + i + " of " + pageCount,
+                283,
+                201,
+                { align: "right" }
+            );
+        }
+    }
+
+    addHeader();
+
+    // Report Details
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+
+    doc.text(title, 14, 37);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+
+    doc.text("Date: " + today, 14, 44);
+
+    // Table
+    doc.autoTable({
+
+        html: table,
+
+        startY: 50,
+
+        margin: {
+            top: 32,
+            bottom: 15,
+            left: 14,
+            right: 14
+        },
+
+        theme: 'grid',
+
+        styles: {
+            fontSize: 9,
+            cellPadding: 3,
+            overflow: 'linebreak'
+        },
+
+        headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold'
+        },
+
+        alternateRowStyles: {
+            fillColor: [240, 245, 250]
+        },
+
+        didDrawPage: function () {
+            addHeader();
+        }
+    });
+
+    addFooter();
+
+    doc.save(currentReportId + "_report.pdf");
+}
+
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Management</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="logo">
+    <img src="{{ url_for('static', filename='Logo.jpg') }}"
+        alt="Rohan Logo">
+</div>
+
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Please enter your details to sign in.</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% for category, message in messages %}
+
+        <div class="alert-message {{ category }}">
+            {{ message }}
+        </div>
+
+    {% endfor %}
+
+{% endwith %}
+
+            <form method="POST">
+
+                <label>Username</label>
+                <input type="text" name="username"
+                placeholder="Enter your username" required>
+
+                <label>Password</label>
+                <div class="password-box">
+                    <input type="password" name="password"
+                    id="password" placeholder="Enter your password" required>
+
+                    <span onclick="togglePassword()">👁</span>
+                </div>
+                {% if error %}
+    <div class="login-error">
+        {{ error }}
+    </div>
+{% endif %}
+
+                <!-- <div class="options">
+                    <label class="remember">
+                        <input type="checkbox">
+                        Remember me
+                    </label>
+
+                    <a href="#">Forgot password?</a> 
+                </div> -->
+<br>
+                <button type="submit">Sign In</button>
+
+            </form>
+
+            <p class="footer-text">
+    © 2026 Chavda Rohan. All Rights Reserved.
+</p>
+
+        </div>
+
+    </div>
+
+    <script>
+        function togglePassword() {
+            let password = document.getElementById("password");
+
+            if (password.type === "password") {
+                password.type = "text";
+            } else {
+                password.type = "password";
+            }
+        }
+    </script>
+
+</body>
+</html>

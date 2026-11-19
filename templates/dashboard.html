@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management Dashboard</title>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="dashboard-body">
+
+    
+<div class="sidebar">
+
+    <div class="sidebar-logo">
+        <img src="{{ url_for('static', filename='Logo.jpg') }}"
+             alt="Rohan Logo">
+    </div>
+
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+
+    {% if session.get('role') == 'admin' %}
+
+        <a href="{{ url_for('add_user') }}">Add New User</a>
+
+        <a href="{{ url_for('manage_users') }}">Manage Users</a>
+
+    {% endif %}
+
+    <a href="{{ url_for('register') }}">
+        Student Registration
+    </a>
+
+    <a href="{{ url_for('view_students') }}">
+    View Students
+</a>
+
+    
+<a href="{{ url_for('reports') }}">
+    <i class="fas fa-chart-pie"></i>
+    <span>Reports</span>
+</a>
+
+    <a href="{{ url_for('my_profile') }}">
+    My Profile
+</a>
+
+    <div class="sidebar-footer">
+        <p class="footer-text">
+            © 2026 Chavda Rohan. All Rights Reserved.
+        </p>
+
+
+    </div>
+
+</div>
+</div>
+
+
+    </div>
+
+    <div class="main-content">
+
+<div class="topbar">
+
+    <h2>Student Management System</h2>
+
+    
+<div class="admin-info">
+
+    <img src="{{ url_for('static', filename='DP.jpg') }}"
+         alt="Admin Profile"
+         class="admin-dp">
+
+    <span>Welcome, {{ session['username'] }}</span>
+
+    <a href="{{ url_for('logout') }}" class="top-logout">
+        Logout
+    </a>
+
+</div>
+
+
+</div>
+
+        <h1>Dashboard</h1>
+        <p>Welcome to Student Management System</p>
+
+        <div class="dashboard-cards">
+
+            <!-- <div class="stat-card">
+                <h3>Total Students</h3>
+                <h2>{{ total_students }}</h2>
+            </div>
+
+            {% if session.get('role') == 'admin' %}
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <h2>{{ total_users }}</h2>
+            </div>
+            {% endif %} -->
+
+            <div class="dashboard-cards">
+
+    <div class="stat-card">
+        <h3>Total Students</h3>
+        <h2>{{ total_students }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Users</h3>
+        <h2>{{ total_users }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Today's Registrations</h3>
+        <h2>{{ today_registrations }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>Activity Summary</h3>
+        <h2>{{ total_activities }}</h2>
+        <p>Total Activities</p>
+    </div>
+
+</div>
+
+        </div>
+
+
+<div class="activity-section">
+
+    <div class="activity-header">
+        <h2>Recent Activity Logs</h2>
+        <span>Latest Activities</span>
+    </div>
+
+    <div class="activity-table">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Activity</th>
+                    <th>Date & Time</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for log in activity_logs %}
+
+                <tr>
+                    <td>{{ log.username }}</td>
+
+                    <td>
+                        <span class="activity-badge">
+                            {{ log.action }}
+                        </span>
+                    </td>
+
+                    <td>{{ log.time }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="3">No Activity Found</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+</div>
+
+    </div>
+
+
+</body>
+
+</html>
