@@ -102,37 +102,37 @@ def dashboard():
         cursor = conn.cursor()
 
         # Total Students
-        cursor.execute("SELECT COUNT(*) FROM Students")
-        total_students = cursor.fetchone()[0]
+cursor.execute('SELECT COUNT(*) FROM public."Students"')
+total_students = cursor.fetchone()[0]
 
-        # Total Users
-        cursor.execute("SELECT COUNT(*) FROM Users")
-        total_users = cursor.fetchone()[0]
+# Total Users
+cursor.execute('SELECT COUNT(*) FROM public."Users"')
+total_users = cursor.fetchone()[0]
 
-        # Today's Registrations
-        today = datetime.now().strftime('%d-%m-%Y')
+# Today's Registrations
+today = datetime.now().strftime('%d-%m-%Y')
 
-        cursor.execute("""
-            SELECT COUNT(*)
-            FROM Students
-            WHERE registration_date = ?
-        """, (today,))
+cursor.execute("""
+    SELECT COUNT(*)
+    FROM public."Students"
+    WHERE registration_date = %s
+""", (today,))
 
-        today_registrations = cursor.fetchone()[0]
+today_registrations = cursor.fetchone()[0]
 
-        # Total Activities
-        cursor.execute("SELECT COUNT(*) FROM ActivityLogs")
-        total_activities = cursor.fetchone()[0]
+# Total Activities
+cursor.execute('SELECT COUNT(*) FROM public."ActivityLogs"')
+total_activities = cursor.fetchone()[0]
 
-        # Latest Activities
-        cursor.execute("""
-            SELECT TOP 10 username, action, activity_date
-            FROM ActivityLogs
-            ORDER BY id DESC
-        """)
+# Latest Activities
+cursor.execute("""
+    SELECT username, action, activity_date
+    FROM public."ActivityLogs"
+    ORDER BY id DESC
+    LIMIT 10
+""")
 
-        rows = cursor.fetchall()
-
+rows = cursor.fetchall()
         activity_logs = []
 
         for row in rows:
