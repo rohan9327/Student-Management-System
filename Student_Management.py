@@ -468,32 +468,48 @@ def register():
 # VIEW STUDENTS
 # =====================================================
 
+
 @app.route("/view_students")
 def view_students():
+
     if "username" not in session:
         return redirect(url_for("login"))
 
     conn = None
     cursor = None
+
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute(
-            """
+
+        cursor.execute("""
             SELECT *
             FROM public."Students"
             ORDER BY id DESC
-            """
+        """)
+
+        rows = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+
+        students = [
+            dict(zip(columns, row))
+            for row in rows
+        ]
+
+        return render_template(
+            "view_students.html",
+            students=students
         )
-        students = cursor.fetchall()
-        return render_template("view_students.html", students=students)
 
     except Exception as e:
-        print("View Students Error:", e)
+        print("View Students Error:", repr(e))
         return f"Database Error: {e}"
+
     finally:
         if cursor:
             cursor.close()
+
         if conn:
             conn.close()
 
