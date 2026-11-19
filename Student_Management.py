@@ -51,8 +51,8 @@ def login():
 
             cursor.execute("""
                 SELECT username, password, role
-                FROM Users
-                WHERE username = ?
+                FROM public."Users"
+                WHERE username = %s
             """, (username,))
 
             user = cursor.fetchone()
@@ -62,19 +62,14 @@ def login():
                 session['username'] = user[0]
                 session['role'] = user[2].lower()
 
-                add_log(
-                    user[0],
-                    "Logged In Successfully"
-                )
+                add_log(user[0], "Logged In Successfully")
 
                 return redirect(url_for('dashboard'))
 
-            else:
-
-                return render_template(
-                    'login.html',
-                    error="Invalid Username or Password"
-                )
+            return render_template(
+                'login.html',
+                error="Invalid Username or Password"
+            )
 
         except Exception as e:
 
@@ -86,13 +81,10 @@ def login():
             )
 
         finally:
-
             if conn:
                 conn.close()
 
     return render_template('login.html')
-
-
 # =====================================================
 # DASHBOARD
 # =====================================================
